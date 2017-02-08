@@ -13,8 +13,9 @@ export class RecipeListComponent implements OnInit {
   ngOnInit() { }
 
 
-  recipes: Recipe[] = [];
-  recipe: Recipe = new Recipe("Dummy", "Dummy", "https://www.economiapersonal.com.ar/wp-content/uploads/2014/07/Default-03.png");
+  recipes: Recipe[] = [
+    new Recipe("Salad", "Salad", "http://www.thegoodburger.com/wp-content/uploads/2014/10/huerta.png", []),
+    new Recipe("Fish", "Fish", "http://www.clipartkid.com/images/769/displaying-19-images-for-clipart-cooked-fish-8kmQOY-clipart.jpg", [])];
 
   //Is not the best
   @Output() recipeSelected = new EventEmitter<Recipe>();
