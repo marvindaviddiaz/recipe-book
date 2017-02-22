@@ -1,9 +1,13 @@
-import { Ingredient } from '../shared/ingredient'
+import { Ingredient } from '../shared/ingredient';
 import { Recipe } from './recipe';
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
+import { Headers, Http, Response } from '@angular/http';
+import 'rxjs/Rx';
 
 @Injectable()
 export class RecipeService {
+
+  recipesChanged = new EventEmitter<Recipe[]>();
 
   private recipes: Recipe[] = [
     new Recipe("Salad", "Salad", "http://www.thegoodburger.com/wp-content/uploads/2014/10/huerta.png",
@@ -15,7 +19,7 @@ export class RecipeService {
   ];
 
 
-  constructor() { }
+  constructor(private http: Http) { }
 
   getRecipes() {
     return this.recipes;
@@ -36,6 +40,25 @@ export class RecipeService {
 
   editRecipe(oldRecipe: Recipe, newRecipe: Recipe) {
     this.recipes[this.recipes.indexOf(oldRecipe)] = newRecipe;
+  }
+
+  storeData() {
+    const body = JSON.stringify(this.recipes);
+    const headers = new Headers({
+      'Content-Type': 'application/json'
+    });
+    return this.http.put('https://recipebook-a1592.firebaseio.com/recipes.json', body, { headers: headers })
+  }
+
+  fetchData() {
+    return this.http.get('https://recipebook-a1592.firebaseio.com/recipes.json')
+      .map((response: Response) => response.json())
+      .subscribe(
+      (data: Recipe[]) => {
+        this.recipes = data;
+        this.recipesChanged.emit(this.recipes);
+      }
+      );
   }
 
 }
